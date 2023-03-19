@@ -6,6 +6,9 @@ import MenuBar from './MenuBar'
 const ListarClientesPage = () => {
 
   const [listaClientes, setListaClientes] = useState([]);
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch('http://localhost:8080/cliente');
