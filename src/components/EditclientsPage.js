@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Alert, Button, Form, FormGroup, Input, Label } from 'reactstrap'
 import MenuBar from './MenuBar'
 
 const EditclientsPage = () => {
@@ -12,7 +12,24 @@ const EditclientsPage = () => {
     celular:''
   });
 
-  const navigate = useNavigate()
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const navigate = useNavigate();
+
+  const {id} = useParams();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('http://localhost:8080/cliente/' + id);
+     
+      const body = await response.json();
+      setCliente(body);
+    }
+    if(id !== 'novo'){
+    fetchData();
+  }
+  }, [id]); //dependencia da chamada, chama no momento da renderização
 
   function handleChange(event){
     const target = event.target;
@@ -24,23 +41,40 @@ const EditclientsPage = () => {
 
     setCliente(uptatedClient)
   }
+
+ 
   async function handleSubmit(){
-    await fetch('http://localhost:8080/cliente',
+    try{
+    const response = await fetch('http://localhost:8080/cliente' + ((cliente.id) ? '/' + cliente.id : '' ),
     {
-      method:'POST',
+      method:(cliente.id) ? 'PUT' : 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type':  'application/json'
       },
       body: JSON.stringify(cliente)
     })
-    navigate('/clientes')
+    if(response.ok){
+      navigate('/clientes')
+    } else {
+        const msgError = await response.text();
+        throw new Error(msgError)
+    }
+  } catch(e){
+      console.log('Error message' + e.message)
+      setShowAlert(true);
+      setErrorMessage(e.message);
   }
-
+  }
+  function toggleAlert(){
+    setErrorMessage(false);
+    setShowAlert();
+  }
   return (
     <>
       <MenuBar/> <div>
       <h1>Editar Cliente Page </h1>
+      <Alert class='danger' isOpen={showAlert} toggle={toggleAlert}>{errorMessage}</Alert>
       <Form>
         <FormGroup>
           <Label for="cpf">CPF</Label>
@@ -61,7 +95,7 @@ const EditclientsPage = () => {
 
         <FormGroup>
           <Button color='primary' onClick={handleSubmit}>Salvar</Button>
-          <Button color='secodary' tag={Link} to='/clientes'>Calcelar</Button>
+          <Button color='secondary' tag={Link} to='/clientes'>Cancelar</Button>
 
         </FormGroup>
       </Form>
