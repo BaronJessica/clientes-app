@@ -35,6 +35,7 @@ const ListarClientesPage = () => {
       }
     );
     fetchData();
+    toggleModalDelete();
   }
 
   const onClickDelete = (id) => {

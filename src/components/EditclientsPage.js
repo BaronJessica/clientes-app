@@ -45,26 +45,26 @@ const EditclientsPage = () => {
  
   async function handleSubmit(){
     try{
-    const response = await fetch('http://localhost:8080/cliente' + ((cliente.id) ? '/' + cliente.id : '' ),
-    {
-      method:(cliente.id) ? 'PUT' : 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type':  'application/json'
-      },
-      body: JSON.stringify(cliente)
-    })
+          const response = await fetch('http://localhost:8080/cliente' + ((cliente.id) ? '/' + cliente.id : '' ),
+          {
+            method:(cliente.id) ? 'PUT' : 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type':  'application/json'
+            },
+            body: JSON.stringify(cliente)
+            })
     if(response.ok){
-      navigate('/clientes')
+            navigate('/clientes')
     } else {
-        const msgError = await response.text();
-        throw new Error(msgError)
-    }
-  } catch(e){
+              const msgError = await response.text();
+              throw new Error(msgError)
+         }     
+      }   catch(e){
       console.log('Error message' + e.message)
       setShowAlert(true);
       setErrorMessage(e.message);
-  }
+      }
   }
   function toggleAlert(){
     setErrorMessage(false);
@@ -74,7 +74,7 @@ const EditclientsPage = () => {
     <>
       <MenuBar/> <div>
       <h1>Editar Cliente Page </h1>
-      <Alert class='danger' isOpen={showAlert} toggle={toggleAlert}>{errorMessage}</Alert>
+      <Alert color='danger' isOpen={showAlert} toggle={toggleAlert}>{errorMessage}</Alert>
       <Form>
         <FormGroup>
           <Label for="cpf">CPF</Label>
